@@ -1,11 +1,12 @@
 defaults:
-  - task: adroit_hammer
+  - task: TODO # real_fruit_tray
 
 name: train_dp3
 
 task_name: ${task.name}
 shape_meta: ${task.shape_meta}
 exp_name: "debug"
+log_dir: TODO
 
 horizon: 4
 n_obs_steps: 2
@@ -117,7 +118,7 @@ logging:
   group: ${exp_name}
   id: null
   mode: online
-  name: ${training.seed}
+  name: ${exp_name}_${training.seed}
   project: dp3
   resume: true
   tags:
@@ -134,14 +135,14 @@ checkpoint:
   save_last_snapshot: False
 
 multi_run:
-  run_dir: data/outputs/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
+  run_dir: ${log_dir}/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
   wandb_name_base: ${now:%Y.%m.%d-%H.%M.%S}_${name}_${task_name}
 
 hydra:
   job:
     override_dirname: ${name}
   run:
-    dir: data/outputs/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
+    dir: ${log_dir}/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
   sweep:
-    dir: data/outputs/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
+    dir: ${log_dir}/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
     subdir: ${hydra.job.num}

@@ -31,6 +31,7 @@ from diffusion_policy_3d.common.checkpoint_util import TopKCheckpointManager
 from diffusion_policy_3d.common.pytorch_util import dict_apply, optimizer_to
 from diffusion_policy_3d.model.diffusion.ema_model import EMAModel
 from diffusion_policy_3d.model.common.lr_scheduler import get_scheduler
+import glob
 
 OmegaConf.register_new_resolver("eval", eval, replace=True)
 
@@ -133,10 +134,11 @@ class TrainDP3Workspace:
                 model=self.ema_model)
 
         # configure env
-        env_runner: BaseRunner
-        env_runner = hydra.utils.instantiate(
-            cfg.task.env_runner,
-            output_dir=self.output_dir)
+        # env_runner: BaseRunner
+        # env_runner = hydra.utils.instantiate(
+        #     cfg.task.env_runner,
+        #     output_dir=self.output_dir)
+        env_runner = None
 
         if env_runner is not None:
             assert isinstance(env_runner, BaseRunner)
@@ -408,6 +410,23 @@ class TrainDP3Workspace:
         else:
             torch.save(payload, path.open('wb'), pickle_module=dill)
         
+        model_path =  str(path).split('.ckpt')[0] + '_model.pth.tar'
+        models_dict = {
+            "model_state_dict": self.model.state_dict(),
+            "ema_model_state_dict": self.ema_model.state_dict()
+        }
+
+        
+        rm_files = glob.glob(f'{str(path.parent)}/epoch*')
+        for rm_file in rm_files:
+            try:
+                os.remove(rm_file)  # 删除文件
+            except OSError as e:
+                print(f"Error deleting {rm_file}: {e}")
+                
+        torch.save(models_dict, model_path)
+
+        del models_dict
         del payload
         torch.cuda.empty_cache()
         return str(path.absolute())
