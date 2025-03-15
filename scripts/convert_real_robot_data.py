@@ -121,9 +121,9 @@ def get_pointcloud_from_multicameras(cameras, images, depths, extrs, intrs, H, W
 
     return multiview_pointcloud
 
-
-expert_data_path = '/cpfs03/user/caizetao/dataset/Dual_Arm_Manipulation/real/training/move_the_fruit_tray'
-save_data_path = '/cpfs03/user/caizetao/dataset/Dual_Arm_Manipulation/real/training/move_the_fruit_tray/move_the_fruit_tray.zarr'
+# TODO
+expert_data_path = '/fs-computility/efm/caizetao/dataset/PPI/training_real/scan_the_bottle'
+save_data_path = '/fs-computility/efm/caizetao/dataset/PPI/dp3_real_data_zarr/scan_the_bottle.zarr'
 # demo_dirs = [os.path.join(expert_data_path, d, 'data.pkl') for d in os.listdir(expert_data_path) if os.path.isdir(os.path.join(expert_data_path, d))]
 episodes_dir = sorted(glob.glob(f'{expert_data_path}/episode*'))
 

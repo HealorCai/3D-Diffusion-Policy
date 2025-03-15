@@ -16,7 +16,7 @@ config_name=${alg_name}
 addition_info=${3}
 seed=${4}
 exp_name=${task_name}-${alg_name}-${addition_info}
-log_dir="/cpfs03/user/caizetao/ckpt/Dual-Arm-Manipulation/real"
+log_dir="/fs-computility/efm/caizetao/dataset/PPI/real_ckpt/dp3"
 run_dir="${log_dir}/${exp_name}_seed${seed}"
 
 
