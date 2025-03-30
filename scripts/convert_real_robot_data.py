@@ -22,7 +22,7 @@ from PIL import Image
 import pickle as pkl
 from scipy.spatial.transform import Rotation as R
 
-from depth_process import image_to_float_array
+# from depth_process import image_to_float_array
 
 from pdb import set_trace
 
@@ -122,8 +122,8 @@ def get_pointcloud_from_multicameras(cameras, images, depths, extrs, intrs, H, W
     return multiview_pointcloud
 
 # TODO
-expert_data_path = '/fs-computility/efm/caizetao/dataset/PPI/training_real/scan_the_bottle'
-save_data_path = '/fs-computility/efm/caizetao/dataset/PPI/dp3_real_data_zarr/scan_the_bottle.zarr'
+expert_data_path = '/fs-computility/efm/caizetao/dataset/PPI/training_real/scan_the_bottle_single_arm'
+save_data_path = '/fs-computility/efm/caizetao/dataset/PPI/dp3_real_data_zarr/scan_the_bottle_single_arm.zarr'
 # demo_dirs = [os.path.join(expert_data_path, d, 'data.pkl') for d in os.listdir(expert_data_path) if os.path.isdir(os.path.join(expert_data_path, d))]
 episodes_dir = sorted(glob.glob(f'{expert_data_path}/episode*'))
 
@@ -181,15 +181,16 @@ for episode_dir in episodes_dir:
         W = int(640 / 2)
 
         for camera in cameras:
-            with Image.open(f'{step}/{camera}_rgb.png') as img:
+            with Image.open(f'{step}/{camera}_rgb.jpg') as img:
                 # img_rgb = img.convert('RGB')
                 if H != 480:
                     images[camera] = preproces_image(np.array(img), H, W, 'bicubic')
                 else:
                     images[camera] = np.array(img)
 
-            with Image.open(f'{step}/{camera}_depth.png') as img:
-                depth = image_to_float_array(np.array(img))
+            with Image.open(f'{step}/{camera}_depth_x10000_uint16.png') as img:
+                # depth = image_to_float_array(np.array(img))
+                depth = np.array(img) / 10000
                 if H != 480:
                     depths[camera] = preproces_image(np.expand_dims(depth, axis=-1), H, W, 'nearest').squeeze(-1)
                 else:
@@ -204,10 +205,10 @@ for episode_dir in episodes_dir:
                         data['robot_state']['robot2_ee_pose'] + \
                        [data['robot_state']['robot2_gripper_open']]
 
-        action =    xyzypr2xyzquat(data['robot_action']['robot1_action_ee_pose']) + \
+        action =    data['robot_action']['robot1_action_ee_pose'] + \
                    [data['robot_action']['robot1_action_gripper1_open']] + \
-                    xyzypr2xyzquat(data['robot_action']['robot2_action_ee_pose']) + \
-                   [data['robot_action']['robot1_action_gripper2_open']]
+                    data['robot_action']['robot2_action_ee_pose'] + \
+                   [data['robot_action']['robot2_action_gripper2_open']]
                 #    [data['robot_action']['robot2_action_gripper2_open']]
         
         obs_pointcloud = preprocess_point_cloud(obs_pointcloud, use_cuda=True)

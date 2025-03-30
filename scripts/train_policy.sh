@@ -3,7 +3,7 @@
 # bash scripts/train_policy.sh dp3 dexart_laptop 0322 0 0
 # bash scripts/train_policy.sh simple_dp3 adroit_hammer 0322 0 0
 # bash scripts/train_policy.sh dp3 metaworld_basketball 0602 0 0
-# bash scripts/train_policy.sh dp3 real_fruit_tray 01060x 0 1
+# bash scripts/train_policy.sh dp3 real_ppi handover03150x 0 1
 
 
 
@@ -48,14 +48,21 @@ python train.py --config-name=${config_name}.yaml \
                             training.debug=$DEBUG \
                             training.seed=${seed} \
                             training.device="cuda:0" \
+                            dataloader.batch_size=256 \
+                            training.num_epochs=10000 \
                             exp_name=${exp_name} \
                             logging.mode=${wandb_mode} \
                             checkpoint.save_ckpt=${save_ckpt} \
-                            task.name='real_fruit_tray' \
-                            task.task_name='fruit_tray' \
-                             task.dataset.zarr_path="/cpfs03/user/caizetao/dataset/Dual_Arm_Manipulation/real/training/move_the_fruit_tray/debug.zarr"
-                            # task.dataset.zarr_path="/cpfs03/user/caizetao/dataset/Dual_Arm_Manipulation/real/training/move_the_fruit_tray/move_the_fruit_tray.zarr"
+                            task.name='real_wear_the_scarf' \
+                            task.task_name='wear_the_scarf' \
+                            horizon=12 \
+                            n_obs_steps=3 \
+                            n_action_steps=10 \
+                            task.dataset.zarr_path="/fs-computility/efm/caizetao/dataset/PPI/dp3_real_data_zarr/wear_the_scarf.zarr"
 
+# 4 2 3 
+# 12 3 10
+# carry_the_tray handover_and_insert_the_plate wipe_the_plate press_the_bottle scan_the_bottle_single_arm wear_the_scarf
 
 
                                 

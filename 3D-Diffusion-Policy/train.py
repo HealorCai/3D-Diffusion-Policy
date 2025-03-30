@@ -412,7 +412,7 @@ class TrainDP3Workspace:
         
         model_path =  str(path).split('.ckpt')[0] + '_model.pth.tar'
         models_dict = {
-            "model_state_dict": self.model.state_dict(),
+            # "model_state_dict": self.model.state_dict(),
             "ema_model_state_dict": self.ema_model.state_dict()
         }
 
